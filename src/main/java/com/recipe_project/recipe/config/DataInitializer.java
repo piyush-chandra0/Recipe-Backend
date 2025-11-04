@@ -16,17 +16,25 @@ public class DataInitializer {
     
     public DataInitializer(RecipeService recipeService) {
         this.recipeService = recipeService;
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
+    }    @EventListener(ApplicationReadyEvent.class)
     public void initializeData() {
         logger.info("Starting data initialization from external API");
+        
         try {
+            // Small delay to ensure all components are fully initialized
+            Thread.sleep(1000);
+            
             int loadedRecipes = recipeService.loadRecipesFromExternalApi();
             logger.info("Successfully initialized {} recipes from external API", loadedRecipes);
+            
+        } catch (InterruptedException e) {
+            logger.warn("Data initialization was interrupted");
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
-            logger.error("Error loading recipes during startup: {}", e.getMessage(), e);
+            logger.error("Error loading recipes during startup: {}", e.getMessage());
+            logger.debug("Full error details: ", e);
             // Don't fail startup if external API is unavailable
+            logger.info("Application will continue without initial recipe data. Use POST /api/recipes/load to load data manually.");
         }
     }
 

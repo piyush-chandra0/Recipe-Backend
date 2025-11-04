@@ -54,4 +54,4 @@ public class RecipeMapper {
                 .build();
     }
 }
-}
+

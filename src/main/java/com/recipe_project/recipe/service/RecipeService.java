@@ -33,9 +33,7 @@ public class RecipeService {
         this.recipeMapper = recipeMapper;
         this.validationUtil = validationUtil;
         logger.info("RecipeService initialized");
-    }
-
-    public int loadRecipesFromExternalApi(){
+    }    public int loadRecipesFromExternalApi(){
         logger.info("Starting to load recipes from external API");
 
         ExternalApiResponse response = externalApiService.fetchAllRecipes();
@@ -47,13 +45,18 @@ public class RecipeService {
 
         List<Recipe> recipes = response.getRecipes().stream()
                 .map(recipeMapper::toEntity)
+                .peek(recipe -> recipe.setId(null)) // Clear ID to allow auto-generation
                 .collect(Collectors.toList());
 
         recipeRepository.deleteAll();
+        
+        // Flush to ensure deleteAll is completed before saving new data
+        recipeRepository.flush();
+        
         List<Recipe> savedRecipes = recipeRepository.saveAll(recipes);
         logger.info("Successfully loaded {} recipes from external API", savedRecipes.size());
         return savedRecipes.size();
-    }    @Transactional
+    }@Transactional
     public List<RecipeDTO> searchRecipes(String query) {
         logger.debug("Searching recipes with query: {}", query);
 

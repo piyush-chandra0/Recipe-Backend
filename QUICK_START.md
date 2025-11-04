@@ -150,7 +150,13 @@ Invoke-RestMethod -Uri "http://localhost:8080/api/recipes" -Method GET | Measure
    Invoke-RestMethod -Uri "http://localhost:8080/api/recipes/load" -Method POST
    ```
 
-4. **CORS issues**
+4. **Database transaction errors (FIXED)**
+   - ✅ Recipe ID conflicts resolved
+   - ✅ Application clears external API IDs before saving
+   - ✅ Database auto-generates sequential IDs
+   - See `DATABASE_ERROR_FIXED.md` for details
+
+5. **CORS issues**
    - Already configured for Angular on port 4200
    - Check Angular is running on correct port
 
